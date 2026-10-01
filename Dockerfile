@@ -1,0 +1,13 @@
+FROM public.ecr.aws/docker/library/node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+
+FROM public.ecr.aws/docker/library/nginx:1.27-alpine
+COPY --from=builder /app/dist /usr/share/nginx/html
+COPY nginx.conf.template /tmp/nginx.conf.template
+EXPOSE 8080
+ENV BACKEND_URL=http://localhost:8080
+CMD ["/bin/sh", "-c", "envsubst '${BACKEND_URL}' < /tmp/nginx.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]
