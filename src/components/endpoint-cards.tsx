@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import {
-  AggTable, Card, CustomerTable, ErrBox, fetchTimed, LoadingRow,
+  AggTable, Card, ErrBox, fetchTimed, LoadingRow,
   MetaBar, MonoParam, OrderTable, PARAMS, RawJson, ROW, RunBtn, StatGrid, DATE_INPUT,
   type RunResult,
 } from "./explorer-utils";
@@ -152,56 +152,6 @@ export function AggregatesCard() {
             { label: "Days Returned", value: String(rows.length) },
           ]} />
           <AggTable rows={rows as unknown as Record<string, unknown>[]} />
-          <RawJson data={result.json} />
-        </>
-      )}
-    </Card>
-  );
-}
-
-export function CustomersCard() {
-  const [q, setQ] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<RunResult | null>(null);
-  const [err, setErr] = useState<string | null>(null);
-
-  async function run() {
-    setLoading(true); setErr(null); setResult(null);
-    try {
-      const url = "/api/customers?limit=10" + (q.trim() ? "&q=" + encodeURIComponent(q.trim()) : "");
-      const r = await fetchTimed(url);
-      setResult(r);
-    } catch (e) { setErr(String(e)); }
-    setLoading(false);
-  }
-
-  const json = result?.json;
-  const rows = (Array.isArray(json) ? json : (json as { data?: unknown[] })?.data ?? []) as Record<string, unknown>[];
-
-  return (
-    <Card path="/api/customers" subtitle="Customer list — cursor-paginated">
-      <div style={ROW}>
-        <div style={{ ...PARAMS, alignItems: "center" }}>
-          <input
-            value={q} onChange={e => setQ(e.target.value)}
-            onKeyDown={e => e.key === "Enter" && run()}
-            placeholder="e.g. kihn, flo"
-            style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)",
-              color: "#e4e4e7", borderRadius: "0.5rem", padding: "0.375rem 0.75rem",
-              fontSize: "0.8rem", fontFamily: "monospace", outline: "none", width: "200px" }}
-          />
-          <MonoParam label="limit" val="10" />
-        </div>
-        <RunBtn onClick={run} loading={loading} />
-      </div>
-      {loading && <LoadingRow />}
-      {err && <ErrBox msg={err} />}
-      {result && !loading && (
-        <>
-          <MetaBar ms={result.ms} label={`${rows.length} customer${rows.length !== 1 ? "s" : ""} returned`} />
-          {rows.length > 0
-            ? <CustomerTable rows={rows} />
-            : <p style={{ fontSize: ".75rem", color: "#71717a" }}>No results.</p>}
           <RawJson data={result.json} />
         </>
       )}

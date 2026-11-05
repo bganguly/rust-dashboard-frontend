@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Spinner, type WakeStatus } from "./explorer-utils";
 import {
-  AggregatesCard, BrushCard, CustomersCard,
+  AggregatesCard, BrushCard,
   OrdersCard, RegionsCard, SearchCard,
 } from "./endpoint-cards";
 
@@ -119,7 +119,6 @@ export default function ApiExplorer() {
         <OrdersCard />
         <SearchCard />
         <AggregatesCard />
-        <CustomersCard />
         <RegionsCard />
         <BrushCard />
       </div>
